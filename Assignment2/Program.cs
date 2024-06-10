@@ -34,9 +34,62 @@ namespace GemHunters
                 case 'L': Position.X = Math.Max(0, Position.X - 1); break;
                 case 'R': Position.X = Math.Min(5, Position.X + 1); break;
             }
-        }
-    }
 
+        }
+        class Cell
+        {
+            public string Occupant { get; set; }
+
+            public Cell()
+            {
+                Occupant = "-";
+            }
+        }
+
+        class Board
+        {
+            public Cell[,] Grid { get; set; }
+            private static Random rand = new Random();
+
+            public Board(Player player1, Player player2)
+            {
+                Grid = new Cell[6, 6];
+                for (int i = 0; i < 6; i++)
+                {
+                    for (int j = 0; j < 6; j++)
+                    {
+                        Grid[i, j] = new Cell();
+                    }
+                }
+
+                // Place players
+                Grid[player1.Position.Y, player1.Position.X].Occupant = "P1";
+                Grid[player2.Position.Y, player2.Position.X].Occupant = "P2";
+
+                // Place gems
+                PlaceRandomElements("G", 5);
+
+                // Place obstacles
+                PlaceRandomElements("O", 5);
+            }
+
+            private void PlaceRandomElements(string element, int count)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    int x, y;
+                    do
+                    {
+                        x = rand.Next(6);
+                        y = rand.Next(6);
+                    } while (Grid[y, x].Occupant != "-");
+
+                    Grid[y, x].Occupant = element;
+                }
+            }
+
+        }
+
+    }
 }
-   
 
