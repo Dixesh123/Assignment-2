@@ -129,6 +129,83 @@ namespace GemHunters
                     Grid[player.Position.Y, player.Position.X].Occupant = "-";
                 }
             }
+            class Game
+            {
+                private Board board;
+                private Player player1;
+                private Player player2;
+                private Player currentPlayer;
+                private int totalTurns;
+
+                public Game()
+                {
+                    player1 = new Player("P1", new Position(0, 0));
+                    player2 = new Player("P2", new Position(5, 5));
+                    board = new Board(player1, player2);
+                    currentPlayer = player1;
+                    totalTurns = 0;
+                }
+
+                public void Start()
+                {
+                    while (!IsGameOver())
+                    {
+                        Console.Clear();
+                        board.Display();
+                        Console.WriteLine($"{currentPlayer.Name}'s turn. Enter move (U, D, L, R): ");
+                        char move = Console.ReadKey().KeyChar;
+                        Console.WriteLine();
+
+                        if (board.IsValidMove(currentPlayer, move))
+                        {
+                            board.Grid[currentPlayer.Position.Y, currentPlayer.Position.X].Occupant = "-";
+                            currentPlayer.Move(move);
+                            board.CollectGem(currentPlayer);
+                            board.Grid[currentPlayer.Position.Y, currentPlayer.Position.X].Occupant = currentPlayer.Name;
+                            totalTurns++;
+                            SwitchTurn();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Unauthorized movement! Make another attempt.");
+                        }
+                    }
+
+                    AnnounceWinner();
+                }
+
+                private void SwitchTurn()
+                {
+                    currentPlayer = (currentPlayer == player1) ? player2 : player1;
+                }
+
+                private bool IsGameOver()
+                {
+                    return totalTurns >= 30;
+                }
+
+                private void AnnounceWinner()
+                {
+                    Console.Clear();
+                    board.Display();
+                    Console.WriteLine("End of Game!");
+                    Console.WriteLine($"P1 Gems: {player1.GemCount}");
+                    Console.WriteLine($"P2 Gems: {player2.GemCount}");
+                    if (player1.GemCount > player2.GemCount)
+                    {
+                        Console.WriteLine("Winner is Player1!");
+                    }
+                    else if (player1.GemCount < player2.GemCount)
+                    {
+                        Console.WriteLine("Winner is Player2!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("It's a draw!");
+                    }
+                }
+            }
+
         }
     }
   }
